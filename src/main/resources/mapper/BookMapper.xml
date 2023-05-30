@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cbz.librarymanagementsystem.mapper.BookMapper">
+
+    <select id="queryBookAndLimit" resultType="com.cbz.librarymanagementsystem.entity.Book"
+            parameterType="com.cbz.librarymanagementsystem.template.QueryTemplate">
+        select *
+        from tb_book
+        <where>
+            <if test="book != null">
+                <if test="book.name != null and book.name != ''">
+                    and name = #{book.name}
+                </if>
+
+                <if test="book.author != null and book.author != ''">
+                    and author = #{book.author}
+                </if>
+                <if test="book.type != null and book.type != ''">
+                    and type = #{book.type}
+                </if>
+                <if test="book.status != null">
+                    and status = #{book.status}
+                </if>
+            </if>
+        </where>
+        limit #{beginIdx} ,#{pageSize};
+    </select>
+    <select id="queryTotal" resultType="java.lang.Integer">
+        select count(*)
+        from tb_book
+        <where>
+
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+
+            <if test="author != null and author != ''">
+                and author = #{author}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+
+        </where>
+    </select>
+</mapper>

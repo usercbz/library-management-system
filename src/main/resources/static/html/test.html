@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试</title>
+    <link rel="stylesheet" href="../element-ui/lib/theme-chalk/index.css">
+    <script src="../js/vue.js"></script>
+    <script src="../element-ui/lib/index.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <el-button @click="login1">登录1</el-button>
+        <el-button @click="login2">登录2</el-button>
+        {{res}}
+    </div>
+
+</body>
+
+<script>
+
+    axios.interceptors.request.use(
+        config => {
+            let token = sessionStorage.getItem('token')
+            if (token) config.headers['authorization'] = token
+            return config
+        },
+        error => {
+            console.log(error)
+            return Promise.reject(error)
+        }
+    )
+
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                res: ''
+            }
+        },
+        methods: {
+            login1() {
+                sessionStorage.setItem('token', '1234567890')
+                axios.get("http://localhost:8081/users/")
+                    .then(Data => {
+                        this.res = Data.data.data + 'login1'
+                    })
+            },
+
+            login2() {
+
+                axios.get("http://localhost:8081/users/")
+                    .then(Data => {
+                        this.res = Data.data.data + 'login2'
+                    })
+            }
+        }
+    })
+</script>
+
+</html>
