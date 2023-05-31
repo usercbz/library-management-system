@@ -1,6 +1,7 @@
 package com.cbz.librarymanagementsystem.config;
 
 import com.cbz.librarymanagementsystem.controller.LoginInterceptor;
+import com.cbz.librarymanagementsystem.controller.SystemInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,12 +16,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor(redisTemplate)).excludePathPatterns(
+
+        registry.addInterceptor(new SystemInterceptor(redisTemplate)).addPathPatterns("/**").order(0);
+
+        registry.addInterceptor(new LoginInterceptor()).excludePathPatterns(
                 "/users/**",
                 "/html/**",
                 "/css/**",
                 "/js/**",
                 "/element-ui/**"
-        );
+        ).order(1);
     }
 }
