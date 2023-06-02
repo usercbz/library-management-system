@@ -4,6 +4,7 @@ import com.cbz.librarymanagementsystem.dto.UserDTO;
 import com.cbz.librarymanagementsystem.entity.Book;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.mapper.BookMapper;
+import com.cbz.librarymanagementsystem.mapper.CollectBookMapper;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
 import com.cbz.librarymanagementsystem.utils.BeanUtils;
@@ -22,6 +23,9 @@ class LibraryManagementSystemApplicationTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private CollectBookMapper collectBookMapper;
 
     @Test
     void contextLoads() {
@@ -51,6 +55,11 @@ class LibraryManagementSystemApplicationTests {
         UserDTO userDTO = BeanUtils.toBeanDTO(new User(2,"张三","123456",1), UserDTO.class);
 
         System.out.println(userDTO);
+    }
+
+    @Test
+    void testCollectMapper(){
+        System.out.println(collectBookMapper.queryAllByUserId(1));
     }
 
 

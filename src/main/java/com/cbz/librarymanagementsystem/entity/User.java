@@ -21,7 +21,5 @@ public class User {
     //权限 1、0
     private Integer permission;
 
-    //icon
 
-    //
 }

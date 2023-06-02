@@ -91,7 +91,7 @@
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.row)" type="primary" icon="el-icon-view">查看</el-button>
-                    <el-button type="primary" icon="el-icon-star-off">收藏</el-button>
+                    <el-button type="primary" @click="addCollect(scope.row.id)" icon="el-icon-star-off">收藏</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -134,6 +134,25 @@
             handleClick(row) {
                 console.log(row);
             },
+
+            addCollect(bookId) {
+                axios.post("http://localhost:8081/books/collect/add/" + bookId)
+                    .then(res => {
+                        const data = res.data;
+
+                        if (data.code == 1) {
+                            //成功
+                            this.$message({
+                                message: "收藏成功",
+                                type: "success"
+                            })
+                        } else {
+                            //失败
+                            this.$message.error(data.msg);
+                        }
+                    })
+            },
+
 
             getTableData(currentPage) {
 

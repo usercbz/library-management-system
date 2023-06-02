@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cbz.librarymanagementsystem.mapper.CollectBookMapper">
+
+    <select id="queryAllByUserId" resultType="com.cbz.librarymanagementsystem.entity.Book" parameterType="integer">
+        select tb_book.id, author, name, description, type, status
+        from tb_user_collect,
+             tb_book
+        where tb_user_collect.user_id = #{userId}
+          and tb_user_collect.book_id = tb_book.id
+    </select>
+</mapper>

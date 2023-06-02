@@ -1,8 +1,6 @@
 package com.cbz.librarymanagementsystem.utils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-
 public class BeanUtils {
 
     /**

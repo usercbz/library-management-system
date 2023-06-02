@@ -12,7 +12,6 @@ import static com.cbz.librarymanagementsystem.utils.SystemConst.STING_CODE_TEMP;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(originPatterns = "http://127.0.0.1:5500", allowCredentials = "true")
 public class UserController {
 
     @Resource

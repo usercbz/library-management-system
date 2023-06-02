@@ -1,6 +1,8 @@
 package com.cbz.librarymanagementsystem.controller;
 
+import com.cbz.librarymanagementsystem.dto.UserDTO;
 import com.cbz.librarymanagementsystem.entity.User;
+import com.cbz.librarymanagementsystem.utils.BeanUtils;
 import com.cbz.librarymanagementsystem.utils.UserHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -9,6 +11,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
+
+import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_KEY;
+import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_TTL;
 
 public class SystemInterceptor implements HandlerInterceptor {
 
@@ -23,16 +28,20 @@ public class SystemInterceptor implements HandlerInterceptor {
         //获取token
         String token = request.getHeader("authorization");
 
-        if(token == null || token.equals("")){
+        if (token == null || token.equals("")) {
             //拦截
             return true;
         }
 
         //根据token查询redis缓存
-        String jsonStr = redisTemplate.opsForValue().get("login:token:" + token);
+        String jsonUser = redisTemplate.opsForValue().get(LOGIN_TOKEN_KEY + token);
+
+        if (jsonUser == null) {
+            return true;
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        User user = objectMapper.readValue(jsonStr, User.class);
+        UserDTO user = objectMapper.readValue(jsonUser, UserDTO.class);
 
         if (user == null) {
             return true;
@@ -41,7 +50,7 @@ public class SystemInterceptor implements HandlerInterceptor {
         UserHolder.saveUser(user);
 
         //刷新有效期
-        redisTemplate.expire("login:token:" + token,1L, TimeUnit.DAYS);
+        redisTemplate.expire(LOGIN_TOKEN_KEY + token, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
 
         return true;
     }

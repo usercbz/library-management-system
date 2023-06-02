@@ -7,7 +7,7 @@ import com.cbz.librarymanagementsystem.dto.UserDTO;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;
 import com.cbz.librarymanagementsystem.service.IUserService;
-import com.cbz.librarymanagementsystem.utils.UserHolder;
+import com.cbz.librarymanagementsystem.utils.BeanUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_KEY;
+import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_TTL;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
@@ -43,18 +46,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return Result.fail("用户名或密码错误！");
         }
 
+        UserDTO userDTO = BeanUtils.toBeanDTO(queryUser, UserDTO.class);
+
         //生成token
         String token = UUID.randomUUID().toString();
 
         //缓存
-        String jsonStr = null;
+        String jsonUser = null;
         try {
-            jsonStr = objectMapper.writeValueAsString(queryUser);
+            jsonUser = objectMapper.writeValueAsString(userDTO);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        redisTemplate.opsForValue().set("login:token:"+token,jsonStr,10L, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(LOGIN_TOKEN_KEY + token, jsonUser, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
 
         return Result.succeed(token);
     }
