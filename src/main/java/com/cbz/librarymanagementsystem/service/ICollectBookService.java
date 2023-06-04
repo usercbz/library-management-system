@@ -1,4 +1,4 @@
-package com.cbz.librarymanagementsystem.service.impl;
+package com.cbz.librarymanagementsystem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cbz.librarymanagementsystem.controller.Result;

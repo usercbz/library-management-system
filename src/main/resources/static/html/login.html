@@ -159,6 +159,7 @@
                                     setTimeout('location.href="./index.html"', 1000)
                                 } else {
                                     //失败
+                                    this.getCheckCode()
                                     this.$message.error(res.msg)
                                 }
                             }).catch(err => {

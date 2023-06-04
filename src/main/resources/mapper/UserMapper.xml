@@ -5,6 +5,17 @@
 
 
 <mapper namespace="com.cbz.librarymanagementsystem.mapper.UserMapper">
+    <update id="updateUsernameById">
+        update tb_user
+        set username = #{username}
+        where id = #{id};
+    </update>
+
+    <update id="updatePasswordById">
+        update tb_user
+        set password = #{password}
+        where id = #{id};
+    </update>
 
     <select id="getList" resultType="com.cbz.librarymanagementsystem.entity.User">
         select *

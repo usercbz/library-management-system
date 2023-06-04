@@ -18,90 +18,208 @@
 
 <div id="app">
 
-    <div>
-        <el-menu default-active="1"
-                 class="el-menu-demo"
-                 mode="horizontal"
-                 background-color="#545c64"
-                 text-color="#fff"
-                 active-text-color="#ffd04b">
+    <div style="display: flex;
+        justify-content: flex-end;  margin: 20px;">
+        <el-breadcrumb separator="|">
 
-            <el-menu-item index="1">
-                <span slot="title">书库</span>
-            </el-menu-item>
+            <el-breadcrumb-item>
+                {{permission+':'+username}}
+            </el-breadcrumb-item>
 
-            <el-menu-item index="2">
-                <span slot="title">主页</span>
-            </el-menu-item>
+            <el-breadcrumb-item>
+                {{loginStatus}}
+            </el-breadcrumb-item>
 
-            <el-menu-item index="3">
-                <span slot="title">设置</span>
-            </el-menu-item>
-
-        </el-menu>
-    </div>
-
-    <div style=" display: flex;justify-content: center; margin: 30px;">
-        <el-form :inline="true" :model="bookTemplate">
-
-            <el-form-item label="作者">
-                <el-input v-model="bookTemplate.author" placeholder="作者"></el-input>
-            </el-form-item>
-
-            <el-form-item label="书名">
-                <el-input v-model="bookTemplate.name" placeholder="书名"></el-input>
-            </el-form-item>
-
-            <el-form-item label="类型">
-                <el-select v-model="bookTemplate.type" placeholder="类型">
-                    <el-option label="玄幻" value="玄幻"></el-option>
-                    <el-option label="修仙" value="修仙"></el-option>
-                    <el-option label="爱情" value="爱情"></el-option>
-                    <el-option label="战争" value="战争"></el-option>
-                </el-select>
-            </el-form-item>
-
-            <el-form-item label="状态">
-                <el-select v-model="bookTemplate.status" placeholder="状态">
-                    <el-option label="在更" value="1"></el-option>
-                    <el-option label="完结" value="0"></el-option>
-                </el-select>
-            </el-form-item>
-
-
-            <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="getTableData(1)">查询</el-button>
-            </el-form-item>
-
-        </el-form>
+            <el-breadcrumb-item>
+                <a href="./login.html">{{loginLabel}}</a>
+            </el-breadcrumb-item>
+        </el-breadcrumb>
     </div>
 
     <div>
-        <el-table :data="tableData" border v-loading="loading" height="700" style="width: 100%">
-            <el-table-column prop="name" label="书名">
-            </el-table-column>
-            <el-table-column prop="author" label="作者">
-            </el-table-column>
-            <el-table-column prop="type" label="类型">
-            </el-table-column>
-            <el-table-column prop="description" label="简介">
-            </el-table-column>
-            <el-table-column prop="status" label="状态">
-            </el-table-column>
-            <el-table-column label="操作">
-                <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="primary" icon="el-icon-view">查看</el-button>
-                    <el-button type="primary" @click="addCollect(scope.row.id)" icon="el-icon-star-off">收藏</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <el-tabs v-model="activeName" type="card">
+            <el-tab-pane label="书库" name="first">
+                <div>
+                    <div style=" display: flex;justify-content: center; margin: 20px;">
+                        <el-form :inline="true" :model="bookTemplate">
+
+                            <el-form-item label="作者">
+                                <el-input v-model="bookTemplate.author" placeholder="作者"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="书名">
+                                <el-input v-model="bookTemplate.name" placeholder="书名"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="类型">
+                                <el-select v-model="bookTemplate.type" placeholder="类型">
+                                    <el-option label="玄幻" value="玄幻"></el-option>
+                                    <el-option label="修仙" value="修仙"></el-option>
+                                    <el-option label="爱情" value="爱情"></el-option>
+                                    <el-option label="战争" value="战争"></el-option>
+                                    <el-option label="冒险" value="冒险"></el-option>
+                                    <el-option label="科幻" value="科幻"></el-option>
+                                </el-select>
+                            </el-form-item>
+
+                            <el-form-item label="状态">
+                                <el-select v-model="bookTemplate.status" placeholder="状态">
+                                    <el-option label="在更" value="1"></el-option>
+                                    <el-option label="完结" value="0"></el-option>
+                                </el-select>
+                            </el-form-item>
+
+
+                            <el-form-item>
+                                <el-button type="primary" icon="el-icon-search" @click="getTableData(1)">查询</el-button>
+                            </el-form-item>
+
+                        </el-form>
+                    </div>
+
+                    <div style="margin-left: 50px; margin-right: 50px">
+                        <el-table :data="tableData" border v-loading="loading" height="571">
+                            <el-table-column prop="name" label="书名">
+                            </el-table-column>
+                            <el-table-column prop="author" label="作者">
+                            </el-table-column>
+                            <el-table-column prop="type" label="类型">
+                            </el-table-column>
+                            <el-table-column prop="description" label="简介">
+                            </el-table-column>
+                            <el-table-column prop="status" label="状态">
+                            </el-table-column>
+                            <el-table-column label="操作">
+                                <template slot-scope="scope">
+                                    <el-button @click="handleClick(scope.row)" type="primary" icon="el-icon-view"
+                                               size="mini">查看
+                                    </el-button>
+                                    <el-button type="primary" @click="addCollect(scope.row.id)" icon="el-icon-star-off"
+                                               size="mini">
+                                        收藏
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+
+                    <div style=" display: flex;justify-content: center; ">
+                        <el-pagination background layout="prev, pager, next" :page-size="pageSize" :total="total"
+                                       @current-change="getTableData">
+                        </el-pagination>
+                    </div>
+                </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="我的收藏" name="second">
+                <div style="margin-left: 50px; margin-right: 50px">
+
+                    <el-table :data="collectBooks" border height="571">
+                        <el-table-column prop="name" label="书名">
+                        </el-table-column>
+                        <el-table-column prop="author" label="作者">
+                        </el-table-column>
+                        <el-table-column prop="type" label="类型">
+                        </el-table-column>
+                        <el-table-column prop="description" label="简介">
+                        </el-table-column>
+                        <el-table-column prop="status" label="状态">
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+
+                                <el-button @click="handleClick(scope.row)" type="primary" icon="el-icon-view"
+                                           size="mini">查看
+                                </el-button>
+
+                                <el-button type="danger" @click="cancelCollect(scope.row.id)"
+                                           icon="el-icon-delete" size="mini">取消收藏
+                                </el-button>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="账号管理" name="third">
+                <el-tabs tab-position="left" style="height: 600px; margin: 30px;">
+
+                    <el-tab-pane label="修改用户名">
+                        <div style="display: flex;justify-content: center;">
+
+                            <el-form status-icon label-width="100px"
+                                     label-position="left">
+
+                                <el-form-item label="新用户名:">
+                                    <el-input v-model="newUsername"></el-input>
+                                </el-form-item>
+
+                                <el-form-item>
+                                    <el-button type="primary" @click="changeName">修改</el-button>
+                                    <el-button @click="clearInputName">取消</el-button>
+                                </el-form-item>
+
+                            </el-form>
+
+                        </div>
+
+                    </el-tab-pane>
+
+                    <el-tab-pane label="修改密码">
+                        <div style="display: flex;justify-content: center;">
+
+                            <el-form status-icon label-width="100px"
+                                     label-position="left">
+
+                                <el-form-item label="原密码:">
+                                    <el-input type="password" v-model="oldPass"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="新密码:">
+                                    <el-input type="password" v-model="newPass"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="确认密码:">
+                                    <el-input type="password" v-model="checkPass"></el-input>
+                                </el-form-item>
+
+                                <el-form-item>
+                                    <el-button type="primary" @click="changePass">修改</el-button>
+                                    <el-button @click="clearInputPass">取消</el-button>
+                                </el-form-item>
+
+                            </el-form>
+
+                        </div>
+
+                    </el-tab-pane>
+
+
+                    <el-tab-pane label="注销账号">
+                        <div>
+                            功能未实现
+                        </div>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="关于我们">
+                        <div>
+                            功能未实现
+                        </div>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="反馈">
+                        <div>
+                            功能未实现
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+
+            </el-tab-pane>
+        </el-tabs>
+
     </div>
 
-    <div style=" display: flex;justify-content: center; ">
-        <el-pagination background layout="prev, pager, next" :page-size="pageSize" :total="total"
-                       @current-change="getTableData">
-        </el-pagination>
-    </div>
 
 </div>
 </body>
@@ -111,7 +229,9 @@
         el: "#app",
 
         mounted() {
+            this.getLoginStatus()
             this.getTableData(1)
+            this.getCollectBooks()
         },
         data() {
             return {
@@ -122,11 +242,23 @@
                     status: null
                 },
                 tableData: [],
+                collectBooks: [],
+
+                username: '',
+                loginStatus: '未登录',
+                permission: '',
+                loginLabel: '请登录',
 
                 total: 100,
                 pageSize: 10,
 
-                loading: true
+                loading: true,
+                activeName: 'first',
+
+                newUsername: '',
+                oldPass: '',
+                newPass: '',
+                checkPass: ''
 
             }
         },
@@ -146,9 +278,44 @@
                                 message: "收藏成功",
                                 type: "success"
                             })
+                            this.getCollectBooks()
                         } else {
                             //失败
                             this.$message.error(data.msg);
+                        }
+                    })
+            },
+
+            getCollectBooks() {
+                axios.get("http://localhost:8081/books/collect")
+                    .then(res => {
+                        let books = res.data.data
+
+                        books.forEach(book => {
+                            if (book.status == 0) {
+                                book.status = '完结'
+                            } else {
+                                book.status = '在更'
+                            }
+                        });
+
+                        this.collectBooks = books
+                    })
+            },
+
+            cancelCollect(bookId) {
+
+                axios.delete("http://localhost:8081/books/collect/remove/" + bookId)
+                    .then(res => {
+                        if (res.data.code == 0) {
+                            this.$message.error(res.data.msg)
+                        } else {
+                            this.$message({
+                                type: "success",
+                                message: "取消成功"
+                            })
+
+                            this.getCollectBooks()
                         }
                     })
             },
@@ -180,6 +347,96 @@
                         this.total = data.total;
 
                         this.loading = false;
+                    })
+            },
+
+            getLoginStatus() {
+                axios.get("http://localhost:8081/users/me")
+                    .then(res => {
+                        const data = res.data
+                        if (data != null) {
+
+                            const UserDTO = data.data
+                            this.username = UserDTO.username
+                            this.loginStatus = '已登录'
+
+                            if (UserDTO.permission == 0) {
+
+                                this.permission = '用户'
+
+                            } else {
+                                this.permission = '管理员'
+                            }
+
+                            this.loginLabel = '退出登录'
+                        }
+                    })
+            },
+
+            clearInputPass(){
+                this.oldPass = null
+                this.newPass = null
+                this.checkPass = null
+            },
+
+            async changePass() {
+                if (this.oldPass == null || this.oldPass === '' || this.newPass == null || this.newPass === '' || this.checkPass == null || this.checkPass === '') {
+                    this.$message.error("请按要求输入密码并确认密码！")
+                    return;
+                }
+
+                if (this.newPass !== this.checkPass) {
+                    this.$message.error("两次密码不一致！请重新输入")
+                    return;
+                }
+
+                const pass = {
+                    oldPasswd: this.oldPass,
+                    newPasswd: this.newPass
+                }
+
+                const res = await axios.post("http://localhost:8081/users/updatePasswd", pass)
+
+                if (res.data.code == 0) {
+                    this.$message.error(res.data.msg)
+                    return;
+                }
+                this.$message({
+                    type: "success",
+                    message: "修改密码成功"
+                })
+
+                this.clearInputPass()
+
+            },
+
+            clearInputName(){
+                this.newUsername = null
+            },
+            changeName() {
+                if (this.newUsername == null || this.newUsername === '') {
+                    this.$message.error("请输入新的用户名")
+                    return
+                }
+                axios.get("http://localhost:8081/users/resetName/" + this.newUsername)
+                    .then(res => {
+                        const data = res.data
+
+                        if (data.code == 1) {
+                            //成功
+                            this.$message({
+                                type: "success",
+                                message: "修改成功"
+                            })
+
+                            this.clearInputName()
+
+                            this.getLoginStatus()
+
+                        } else {
+                            //失败
+                            this.$message.error(data.msg)
+                        }
                     })
             }
         }

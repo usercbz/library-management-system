@@ -12,7 +12,7 @@ spring:
     password: 111111
 
   redis:
-    host: 192.168.93.18
+    host: 192.168.93.20
     password: 123456
 
 mybatis-plus:

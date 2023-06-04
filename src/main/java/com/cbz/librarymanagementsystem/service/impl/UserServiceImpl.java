@@ -1,19 +1,25 @@
 package com.cbz.librarymanagementsystem.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cbz.librarymanagementsystem.controller.Result;
 import com.cbz.librarymanagementsystem.dto.UserDTO;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;
 import com.cbz.librarymanagementsystem.service.IUserService;
+import com.cbz.librarymanagementsystem.template.PasswdData;
 import com.cbz.librarymanagementsystem.utils.BeanUtils;
+import com.cbz.librarymanagementsystem.utils.UserHolder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private ObjectMapper objectMapper;
+
 
     @Override
     public Result login(User user) {
@@ -83,5 +90,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Result registerUser(User user) {
 
         return save(user) ? Result.succeed(null) : Result.fail("注册失败！");
+    }
+
+    @Override
+    public Result checkPasswd(PasswdData passwdData) {
+
+        Integer id = UserHolder.getUser().getId();
+
+        //校验原密码是否正确
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+
+        wrapper.eq("id", id).eq("password", passwdData.getOldPasswd());
+
+//        System.out.println(oldPass);
+
+        User user = getOne(wrapper);
+
+        //原密码不正确
+        if (user == null) {
+            return Result.fail("密码错误！");
+        }
+        //正确、修改密码
+
+        return baseMapper.updatePasswordById(id, passwdData.getNewPasswd()) ? Result.succeed(null) : Result.fail("修改失败");
+    }
+
+    @Override
+    public Result updateUsername(String newUsername, HttpServletRequest request) {
+
+        boolean isReset = baseMapper.updateUsernameById(UserHolder.getUser().getId(), newUsername);
+
+        if (!isReset) {
+            return Result.fail("修改用户名失败");
+        }
+        //成功
+        String token = request.getHeader("authorization");
+
+        UserDTO user = UserHolder.getUser();
+        UserHolder.removeUser();
+
+        user.setUsername(newUsername);
+
+        String jsonUser = null;
+        try {
+            jsonUser = objectMapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        redisTemplate.opsForValue().set(LOGIN_TOKEN_KEY + token, jsonUser, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
+
+        UserHolder.saveUser(user);
+        return Result.succeed(null);
     }
 }

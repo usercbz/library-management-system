@@ -2,10 +2,13 @@ package com.cbz.librarymanagementsystem.controller;
 
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.service.impl.UserServiceImpl;
+import com.cbz.librarymanagementsystem.template.PasswdData;
 import com.cbz.librarymanagementsystem.utils.UserHolder;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import static com.cbz.librarymanagementsystem.utils.SystemConst.CODE_LEN;
 import static com.cbz.librarymanagementsystem.utils.SystemConst.STING_CODE_TEMP;
@@ -48,6 +51,18 @@ public class UserController {
     public Result getMe(){
         return Result.succeed(UserHolder.getUser());
     }
+
+    @GetMapping("/resetName/{newUsername}")
+    public Result resetUsername(@PathVariable String newUsername, HttpServletRequest request){
+        return userService.updateUsername(newUsername,request);
+    }
+
+    @PostMapping("/updatePasswd")
+    public Result checkPasswd(@RequestBody PasswdData passwdData){
+
+        return userService.checkPasswd(passwdData);
+    }
+
 
 
     private String createCode() {
