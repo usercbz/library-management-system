@@ -1,8 +1,6 @@
 package com.cbz.librarymanagementsystem.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cbz.librarymanagementsystem.controller.Result;
 import com.cbz.librarymanagementsystem.dto.UserDTO;
@@ -16,7 +14,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +31,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private CollectBookServiceImpl collectBookService;
 
 
     @Override
@@ -93,26 +93,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public Result checkPasswd(PasswdData passwdData) {
+    public Result updatePasswd(PasswdData passwdData) {
 
-        Integer id = UserHolder.getUser().getId();
-
-        //校验原密码是否正确
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-
-        wrapper.eq("id", id).eq("password", passwdData.getOldPasswd());
-
-//        System.out.println(oldPass);
-
-        User user = getOne(wrapper);
-
-        //原密码不正确
-        if (user == null) {
+        //校验密码
+        if (checkPassword(passwdData.getOldPasswd())) {
+            //原密码不正确
             return Result.fail("密码错误！");
         }
         //正确、修改密码
 
-        return baseMapper.updatePasswordById(id, passwdData.getNewPasswd()) ? Result.succeed(null) : Result.fail("修改失败");
+        return baseMapper.updatePasswordById(UserHolder.getUser().getId(), passwdData.getNewPasswd()) ? Result.succeed(null) : Result.fail("修改失败");
     }
 
     @Override
@@ -142,5 +132,48 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         UserHolder.saveUser(user);
         return Result.succeed(null);
+    }
+
+    @Override
+    public Result deleteUserByPasswd(PasswdData passwdData, HttpServletRequest request) {
+
+        Integer id = UserHolder.getUser().getId();
+
+        //校验密码
+        if (checkPassword(passwdData.getOldPasswd())) {
+            //密码不正确
+            return Result.fail("密码错误！");
+        }
+
+        //删除用户的书籍
+        if(!collectBookService.getBaseMapper().deleteByUserId(id)){
+            return Result.fail("注销失败");
+        }
+
+        //删除用户
+        if (removeById(id)) {
+
+            //将redis的缓存删除
+            String token = request.getHeader("authorization");
+
+            redisTemplate.delete(LOGIN_TOKEN_KEY + token);
+            return Result.succeed(null);
+        }
+
+        return Result.fail("注销失败");
+    }
+
+    private boolean checkPassword(String password) {
+
+        Integer id = UserHolder.getUser().getId();
+
+        //校验原密码是否正确
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+
+        wrapper.eq("id", id).eq("password", password);
+
+        User user = getOne(wrapper);
+
+        return user == null;
     }
 }

@@ -15,7 +15,9 @@ public interface IUserService extends IService<User> {
 
     Result registerUser(User user);
 
-    Result checkPasswd(PasswdData passwdData);
+    Result updatePasswd(PasswdData passwdData);
 
     Result updateUsername(String newUsername, HttpServletRequest request);
+
+    Result deleteUserByPasswd(PasswdData passwdData,HttpServletRequest  request);
 }

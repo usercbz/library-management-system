@@ -4,7 +4,6 @@ import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.service.impl.UserServiceImpl;
 import com.cbz.librarymanagementsystem.template.PasswdData;
 import com.cbz.librarymanagementsystem.utils.UserHolder;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -58,9 +57,14 @@ public class UserController {
     }
 
     @PostMapping("/updatePasswd")
-    public Result checkPasswd(@RequestBody PasswdData passwdData){
+    public Result updatePasswd(@RequestBody PasswdData passwdData){
 
-        return userService.checkPasswd(passwdData);
+        return userService.updatePasswd(passwdData);
+    }
+
+    @PostMapping("/unsubscribe")
+    public Result unsubscribe(@RequestBody PasswdData passwdData,HttpServletRequest  request){
+        return userService.deleteUserByPasswd(passwdData,request);
     }
 
 

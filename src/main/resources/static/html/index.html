@@ -197,8 +197,21 @@
 
 
                     <el-tab-pane label="注销账号">
-                        <div>
-                            功能未实现
+                        <div style="display: flex;justify-content: center;">
+
+                            <el-form status-icon label-width="80px" label-position="left">
+
+                                <el-form-item label="密码:">
+                                    <el-input type="password" v-model="delPass"></el-input>
+                                </el-form-item>
+
+                                <el-form-item>
+                                    <el-button type="danger" @click="unsubscribe">注销账号</el-button>
+                                    <el-button @click="cancelUnsubscribe">取消</el-button>
+                                </el-form-item>
+
+                            </el-form>
+
                         </div>
                     </el-tab-pane>
 
@@ -258,7 +271,9 @@
                 newUsername: '',
                 oldPass: '',
                 newPass: '',
-                checkPass: ''
+                checkPass: '',
+
+                delPass: ''
 
             }
         },
@@ -305,21 +320,32 @@
 
             cancelCollect(bookId) {
 
-                axios.delete("http://localhost:8081/books/collect/remove/" + bookId)
-                    .then(res => {
-                        if (res.data.code == 0) {
-                            this.$message.error(res.data.msg)
-                        } else {
-                            this.$message({
-                                type: "success",
-                                message: "取消成功"
-                            })
+                this.$confirm('是否取消对该书籍的收藏?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
 
-                            this.getCollectBooks()
-                        }
-                    })
+                    axios.delete("http://localhost:8081/books/collect/remove/" + bookId)
+                        .then(res => {
+                            if (res.data.code == 0) {
+                                this.$message.error(res.data.msg)
+                            } else {
+                                this.$message({
+                                    type: "success",
+                                    message: "取消成功"
+                                })
+
+                                this.getCollectBooks()
+                            }
+                        })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
             },
-
 
             getTableData(currentPage) {
 
@@ -373,7 +399,7 @@
                     })
             },
 
-            clearInputPass(){
+            clearInputPass() {
                 this.oldPass = null
                 this.newPass = null
                 this.checkPass = null
@@ -410,7 +436,7 @@
 
             },
 
-            clearInputName(){
+            clearInputName() {
                 this.newUsername = null
             },
             changeName() {
@@ -438,7 +464,45 @@
                             this.$message.error(data.msg)
                         }
                     })
-            }
+            },
+
+            unsubscribe() {
+
+                this.$confirm('此操作将不可逆, 是否要注销账号?', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+
+                    const pass = {
+                        oldPasswd: this.delPass
+                    }
+
+                    axios.post("http://localhost:8081/users/unsubscribe", pass)
+                        .then(res => {
+                            if (res.data.code == 1) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '注销成功!'
+                                });
+                                setTimeout('location.href="./login.html"', 1000)
+                            } else {
+                                this.$message.error(res.data.msg)
+                            }
+                        })
+
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
+
+            cancelUnsubscribe() {
+                this.delPass = null
+            },
         }
     })
 </script>

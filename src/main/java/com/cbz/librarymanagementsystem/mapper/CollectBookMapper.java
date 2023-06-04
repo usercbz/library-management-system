@@ -9,4 +9,6 @@ import java.util.List;
 public interface CollectBookMapper extends BaseMapper<CollectBook> {
 
     List<Book> queryAllByUserId(Integer userId);
+
+    boolean deleteByUserId(Integer userId);
 }

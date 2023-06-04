@@ -143,6 +143,7 @@
                         }
                         if (this.checkCode !== this.code) {
                             this.$message.error("验证码错误！")
+                            this.getCheckCode()
                             return false
                         }
 
