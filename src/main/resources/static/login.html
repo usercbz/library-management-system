@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录页面</title>
 
-    <link rel="stylesheet" href="../js/element-lib/theme-chalk/index.css">
-    <script src="../js/vue.js"></script>
-    <script src="../js/element-lib/index.js"></script>
-    <script src="../js/axios-0.18.0.js"></script>
-    <script src="../js/axios-intercept.js"></script>
+    <link rel="stylesheet" href="./js/element-lib/theme-chalk/index.css">
+    <script src="./js/vue.js"></script>
+    <script src="./js/element-lib/index.js"></script>
+    <script src="./js/axios-0.18.0.js"></script>
+    <script src="./js/axios-intercept.js"></script>
 
     <style>
         * {
@@ -148,23 +148,21 @@
                         }
 
                         axios.post("http://localhost:8081/users/login", this.user)
-                            .then(Data => {
-                                const res = Data.data
-                                if (res.code == 1) {
+                            .then(res => {
+                                if (res.data) {
                                     //成功
                                     sessionStorage.setItem('token', res.data)
                                     this.$message({
                                         message: '登录成功！',
                                         type: 'success'
                                     });
-                                    setTimeout('location.href="./index.html"', 1000)
-                                } else {
-                                    //失败
-                                    this.getCheckCode()
-                                    this.$message.error(res.msg)
+                                    setTimeout(() => {
+                                        location.href = './index.html'
+                                    }, 500)
                                 }
                             }).catch(err => {
-                            console.log(err)
+                            this.getCheckCode()
+                            this.$message.error(err)
                         })
                     } else {
                         return false;
@@ -180,8 +178,10 @@
             getCheckCode() {
                 axios.get("http://localhost:8081/users/code")
                     .then(res => {
-                        this.checkCode = res.data.data;
-                    })
+                        this.checkCode = res.data;
+                    }).catch(err=>{
+                    this.$message.error(err)
+                })
             }
 
         }

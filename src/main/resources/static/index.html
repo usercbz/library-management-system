@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页</title>
 
-    <link rel="stylesheet" href="../js/element-lib/theme-chalk/index.css">
-    <script src="../js/vue.js"></script>
-    <script src="../js/element-lib/index.js"></script>
-    <script src="../js/axios-0.18.0.js"></script>
-    <script src="../js/axios-intercept.js"></script>
+    <link rel="stylesheet" href="./js/element-lib/theme-chalk/index.css">
+    <script src="./js/vue.js"></script>
+    <script src="./js/element-lib/index.js"></script>
+    <script src="./js/axios-0.18.0.js"></script>
+    <script src="./js/axios-intercept.js"></script>
 </head>
 
 <body>
@@ -53,6 +53,8 @@
 
                             <el-form-item label="类型">
                                 <el-select v-model="bookTemplate.type" placeholder="类型">
+
+                                    <el-option label="所有" value=""></el-option>
                                     <el-option label="玄幻" value="玄幻"></el-option>
                                     <el-option label="修仙" value="修仙"></el-option>
                                     <el-option label="爱情" value="爱情"></el-option>
@@ -64,6 +66,7 @@
 
                             <el-form-item label="状态">
                                 <el-select v-model="bookTemplate.status" placeholder="状态">
+                                    <el-option label="所有" value=''></el-option>
                                     <el-option label="在更" value="1"></el-option>
                                     <el-option label="完结" value="0"></el-option>
                                 </el-select>
@@ -282,7 +285,7 @@
                     author: '',
                     name: '',
                     type: '',
-                    status: null
+                    status: ''
                 },
                 tableData: [],
                 collectBooks: [],
@@ -322,26 +325,21 @@
             addCollect(bookId) {
                 axios.post("http://localhost:8081/books/collect/add/" + bookId)
                     .then(res => {
-                        const data = res.data;
-
-                        if (data.code == 1) {
-                            //成功
-                            this.$message({
-                                message: "收藏成功",
-                                type: "success"
-                            })
-                            this.getCollectBooks()
-                        } else {
-                            //失败
-                            this.$message.error(data.msg);
-                        }
-                    })
+                        //成功
+                        this.$message({
+                            message: "收藏成功",
+                            type: "success"
+                        })
+                        this.getCollectBooks()
+                    }).catch(err => {
+                    this.$message.error(err);
+                })
             },
 
             getCollectBooks() {
                 axios.get("http://localhost:8081/books/collect")
                     .then(res => {
-                        let books = res.data.data
+                        let books = res.data
 
                         books.forEach(book => {
                             if (book.status == 0) {
@@ -352,6 +350,9 @@
                         });
 
                         this.collectBooks = books
+                    })
+                    .catch(err => {
+                        this.$message.error(err);
                     })
             },
 
@@ -365,16 +366,16 @@
 
                     axios.delete("http://localhost:8081/books/collect/remove/" + bookId)
                         .then(res => {
-                            if (res.data.code == 0) {
-                                this.$message.error(res.data.msg)
-                            } else {
-                                this.$message({
-                                    type: "success",
-                                    message: "取消成功"
-                                })
 
-                                this.getCollectBooks()
-                            }
+                            this.$message({
+                                type: "success",
+                                message: "取消成功"
+                            })
+
+                            this.getCollectBooks()
+                        })
+                        .catch(err => {
+                            this.$message.error(err);
                         })
                 }).catch(() => {
                     this.$message({
@@ -397,7 +398,7 @@
 
                 axios.post("http://localhost:8081/books/data", queryTemplate)
                     .then(res => {
-                        const data = res.data.data;
+                        const data = res.data;
                         let books = data.books;
                         books.forEach(book => {
                             if (book.status == 0) {
@@ -411,15 +412,18 @@
 
                         this.loading = false;
                     })
+                    .catch(err => {
+                        this.$message.error(err);
+                    })
             },
 
             getLoginStatus() {
                 axios.get("http://localhost:8081/users/me")
                     .then(res => {
-                        const data = res.data
-                        if (data != null) {
 
-                            const UserDTO = data.data
+                        if (res) {
+
+                            const UserDTO = res.data
                             this.username = UserDTO.username
                             this.loginStatus = '已登录'
 
@@ -433,7 +437,9 @@
 
                             this.loginLabel = '退出登录'
                         }
-                    })
+                    }).catch(err => {
+                    this.$message.error(err);
+                })
             },
 
             clearInputPass() {
@@ -442,7 +448,7 @@
                 this.checkPass = null
             },
 
-            async changePass() {
+            changePass() {
                 if (this.oldPass == null || this.oldPass === '' || this.newPass == null || this.newPass === '' || this.checkPass == null || this.checkPass === '') {
                     this.$message.error("请按要求输入密码并确认密码！")
                     return;
@@ -457,20 +463,16 @@
                     oldPasswd: this.oldPass,
                     newPasswd: this.newPass
                 }
-
-                const res = await axios.post("http://localhost:8081/users/updatePasswd", pass)
-
-                if (res.data.code == 0) {
-                    this.$message.error(res.data.msg)
-                    return;
-                }
-                this.$message({
-                    type: "success",
-                    message: "修改密码成功"
+                axios.post("http://localhost:8081/users/updatePasswd", pass)
+                    .then(res => {
+                        this.$message({
+                            type: "success",
+                            message: "修改密码成功"
+                        })
+                        this.clearInputPass()
+                    }).catch(err => {
+                    this.$message.error(err)
                 })
-
-                this.clearInputPass()
-
             },
 
             clearInputName() {
@@ -483,26 +485,19 @@
                 }
                 axios.get("http://localhost:8081/users/resetName/" + this.newUsername)
                     .then(res => {
-                        const data = res.data
+                        //成功
+                        this.$message({
+                            type: "success",
+                            message: "修改成功"
+                        })
 
-                        if (data.code == 1) {
-                            //成功
-                            this.$message({
-                                type: "success",
-                                message: "修改成功"
-                            })
+                        this.clearInputName()
 
-                            this.clearInputName()
-
-                            this.getLoginStatus()
-
-                        } else {
-                            //失败
-                            this.$message.error(data.msg)
-                        }
-                    })
+                        this.getLoginStatus()
+                    }).catch(err => {
+                    this.$message.error(err)
+                })
             },
-
             unsubscribe() {
 
                 this.$confirm('此操作将不可逆, 是否要注销账号?', '警告', {
@@ -517,18 +512,16 @@
 
                     axios.post("http://localhost:8081/users/unsubscribe", pass)
                         .then(res => {
-                            if (res.data.code == 1) {
-                                this.$message({
-                                    type: 'success',
-                                    message: '注销成功!'
-                                });
-                                setTimeout('location.href="./login.html"', 1000)
-                            } else {
-                                this.$message.error(res.data.msg)
-                            }
-                        })
-
-
+                            this.$message({
+                                type: 'success',
+                                message: '注销成功!'
+                            });
+                            setTimeout(()=>{
+                                location.href= "./login.html"
+                            },  )
+                        }).catch(err=>{
+                            this.$message.error(err)
+                    })
                 }).catch(() => {
                     this.$message({
                         type: 'info',
@@ -536,7 +529,6 @@
                     });
                 });
             },
-
             cancelUnsubscribe() {
                 this.delPass = null
             },

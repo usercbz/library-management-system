@@ -21,10 +21,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new LoginInterceptor()).excludePathPatterns(
                 "/users/**",
-                "/html/**",
+                "/*.html",
                 "/css/**",
-                "/js/**",
-                "/element-ui/**"
+                "/js/**"
         ).order(1);
     }
 }
