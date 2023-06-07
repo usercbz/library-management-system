@@ -1,5 +1,6 @@
 package com.cbz.librarymanagementsystem.controller;
 
+import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.service.impl.UserServiceImpl;
 import com.cbz.librarymanagementsystem.template.PasswdData;
@@ -66,8 +67,6 @@ public class UserController {
     public Result unsubscribe(@RequestBody PasswdData passwdData,HttpServletRequest  request){
         return userService.deleteUserByPasswd(passwdData,request);
     }
-
-
 
     private String createCode() {
 

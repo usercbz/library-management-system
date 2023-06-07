@@ -1,10 +1,9 @@
 package com.cbz.librarymanagementsystem.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cbz.librarymanagementsystem.controller.Result;
+import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.template.PasswdData;
-import org.springframework.http.HttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 

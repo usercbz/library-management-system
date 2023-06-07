@@ -2,7 +2,7 @@ package com.cbz.librarymanagementsystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cbz.librarymanagementsystem.controller.Result;
+import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.entity.Book;
 import com.cbz.librarymanagementsystem.entity.CollectBook;
 import com.cbz.librarymanagementsystem.mapper.CollectBookMapper;
@@ -44,10 +44,23 @@ public class CollectBookServiceImpl extends ServiceImpl<CollectBookMapper, Colle
     @Override
     public Result deleteBookToCollect(Integer bookId) {
 
+        return deleteCollectBookByBookId(bookId) ? Result.succeed(null) : Result.fail("取消收藏失败！");
+    }
+
+
+    public boolean deleteCollectBookByBookId(Integer userId,Integer bookId){
+
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("user_id", UserHolder.getUser().getId());
+
+        if (userId != null) {
+            hashMap.put("user_id", userId);
+        }
         hashMap.put("book_id", bookId);
 
-        return removeByMap(hashMap) ? Result.succeed(null) : Result.fail("取消收藏失败！");
+        return removeByMap(hashMap);
+    }
+
+    private boolean deleteCollectBookByBookId(Integer bookId){
+        return deleteCollectBookByBookId(UserHolder.getUser().getId(),bookId);
     }
 }

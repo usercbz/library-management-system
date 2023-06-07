@@ -2,7 +2,7 @@ package com.cbz.librarymanagementsystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cbz.librarymanagementsystem.controller.Result;
+import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.dto.UserDTO;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;

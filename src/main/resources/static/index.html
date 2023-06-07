@@ -125,7 +125,7 @@
 
                     <div style=" display: flex;justify-content: center; ">
                         <el-pagination background layout="prev, pager, next" :page-size="pageSize" :total="total"
-                                       @current-change="getTableData">
+                                       @current-change="getTableData" :current-page.sync="currentPage">
                         </el-pagination>
                     </div>
                 </div>
@@ -173,6 +173,122 @@
 
                     </el-table>
                 </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="书籍管理" name="admin" v-if="isAdmin">
+
+                <el-tabs tab-position="left" style="height: 600px; margin: 30px;">
+                    <el-tab-pane label="修改书籍">
+                        <div>
+                            <el-table :data="allBooks" border height="571">
+                                <el-table-column prop="name" label="书名">
+                                </el-table-column>
+                                <el-table-column prop="author" label="作者">
+                                </el-table-column>
+                                <el-table-column prop="type" label="类型">
+                                </el-table-column>
+                                <el-table-column prop="description" label="简介">
+                                </el-table-column>
+                                <el-table-column prop="status" label="状态">
+                                </el-table-column>
+                                <el-table-column label="操作">
+                                    <template slot-scope="scope">
+                                        <el-button type="primary" @click="updateBookData(scope.row)" icon="el-icon-edit"
+                                                   size="mini">修改
+                                        </el-button>
+
+                                        <el-dialog title="修改书籍信息" :visible.sync="dialogFormVisible">
+                                            <el-form :model="dialogFormData" label-position="left" label-width="80px" style="width: 400px;">
+                                                <el-form-item label="作者">
+                                                    <el-input placeholder="作者" v-model="dialogFormData.author"></el-input>
+                                                </el-form-item>
+
+                                                <el-form-item label="书名">
+                                                    <el-input placeholder="书名" v-model="dialogFormData.name"></el-input>
+                                                </el-form-item>
+
+                                                <el-form-item label="类型">
+                                                    <el-select placeholder="类型" v-model="dialogFormData.type">
+                                                        <el-option label="玄幻" value="玄幻"></el-option>
+                                                        <el-option label="修仙" value="修仙"></el-option>
+                                                        <el-option label="爱情" value="爱情"></el-option>
+                                                        <el-option label="战争" value="战争"></el-option>
+                                                        <el-option label="冒险" value="冒险"></el-option>
+                                                        <el-option label="科幻" value="科幻"></el-option>
+                                                    </el-select>
+                                                </el-form-item>
+
+                                                <el-form-item label="状态">
+                                                    <el-select placeholder="状态" v-model="dialogFormData.status">
+                                                        <el-option label="在更" value="1"></el-option>
+                                                        <el-option label="完结" value="0"></el-option>
+                                                    </el-select>
+                                                </el-form-item>
+
+                                                <el-form-item label="简介">
+                                                    <el-input type="textarea" v-model="dialogFormData.description"></el-input>
+                                                </el-form-item>
+
+                                                <el-form-item>
+                                                    <el-button type="primary" @click="submitChange">修改</el-button>
+                                                    <el-button @click="cancelChange">取消</el-button>
+                                                </el-form-item>
+
+                                            </el-form>
+                                        </el-dialog>
+
+                                        <el-button type="danger" @click="deleteBookData(scope.row.id)" icon="el-icon-delete"
+                                                   size="mini">删除
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="新添书籍">
+                        <div style="display: flex;justify-content: center; margin: 20px">
+                            <el-form :model="bookData" label-position="left" label-width="80px" style="width: 400px;">
+                                <el-form-item label="作者">
+                                    <el-input placeholder="作者" v-model="bookData.author"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="书名">
+                                    <el-input placeholder="书名" v-model="bookData.name"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="类型">
+                                    <el-select placeholder="类型" v-model="bookData.type">
+                                        <el-option label="玄幻" value="玄幻"></el-option>
+                                        <el-option label="修仙" value="修仙"></el-option>
+                                        <el-option label="爱情" value="爱情"></el-option>
+                                        <el-option label="战争" value="战争"></el-option>
+                                        <el-option label="冒险" value="冒险"></el-option>
+                                        <el-option label="科幻" value="科幻"></el-option>
+                                    </el-select>
+                                </el-form-item>
+
+                                <el-form-item label="状态">
+                                    <el-select placeholder="状态" v-model="bookData.status">
+                                        <el-option label="在更" value="1"></el-option>
+                                        <el-option label="完结" value="0"></el-option>
+                                    </el-select>
+                                </el-form-item>
+
+                                <el-form-item label="简介">
+                                    <el-input type="textarea" v-model="bookData.description"></el-input>
+                                </el-form-item>
+
+                                <el-form-item>
+                                    <el-button type="primary" @click="addBookData">立即添加</el-button>
+                                    <el-button @click="clearFormData">取消</el-button>
+                                </el-form-item>
+
+                            </el-form>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+
             </el-tab-pane>
 
             <el-tab-pane label="账号管理" name="third">
@@ -249,13 +365,13 @@
                     </el-tab-pane>
 
                     <el-tab-pane label="关于我们">
-                        <div>
-
+                        <div style="display: flex;justify-content: center;">
+                            功能未实现
                         </div>
                     </el-tab-pane>
 
                     <el-tab-pane label="反馈">
-                        <div>
+                        <div style="display: flex;justify-content: center;">
                             功能未实现
                         </div>
                     </el-tab-pane>
@@ -276,8 +392,7 @@
 
         mounted() {
             this.getLoginStatus()
-            this.getTableData(1)
-            this.getCollectBooks()
+            this.reloadData()
         },
         data() {
             return {
@@ -287,21 +402,23 @@
                     type: '',
                     status: ''
                 },
+
                 tableData: [],
                 collectBooks: [],
+                allBooks:[],
 
-                activeBookInfo: {
-                    name: '',
-                    author: '',
-                    type: '',
-                    status: ''
-                },
+                activeBookInfo: {},
+
+                bookData: {},
 
                 username: '',
                 loginStatus: '未登录',
                 permission: '',
                 loginLabel: '请登录',
 
+                isAdmin: false,
+
+                currentPage:1,
                 total: 100,
                 pageSize: 10,
 
@@ -313,15 +430,45 @@
                 newPass: '',
                 checkPass: '',
 
-                delPass: ''
+                delPass: '',
+
+                dialogFormVisible:false,
+
+                dialogFormData:{
+                    id:null,
+                    author: '',
+                    name: '',
+                    type: '',
+                    status: '',
+                    description:''
+                },
 
             }
         },
         methods: {
+            reloadData(){
+                this.getTableData(1)
+                this.getAllBooks()
+                this.getCollectBooks()
+            },
             handleClick(row) {
                 this.activeBookInfo = row
             },
+            getAllBooks(){
+                axios.get("http://localhost:8081/books/all")
+                .then(res=>{
+                    let books = res.data
+                    books.forEach(book => {
+                        if (book.status == 0) {
+                            book.status = '完结'
+                        } else {
+                            book.status = '在更'
+                        }
+                    });
 
+                    this.allBooks = books;
+                })
+            },
             addCollect(bookId) {
                 axios.post("http://localhost:8081/books/collect/add/" + bookId)
                     .then(res => {
@@ -409,7 +556,7 @@
                         });
                         this.tableData = books;
                         this.total = data.total;
-
+                        this.currentPage = currentPage
                         this.loading = false;
                     })
                     .catch(err => {
@@ -430,9 +577,11 @@
                             if (UserDTO.permission == 0) {
 
                                 this.permission = '用户'
+                                this.isAdmin = false
 
                             } else {
                                 this.permission = '管理员'
+                                this.isAdmin = true
                             }
 
                             this.loginLabel = '退出登录'
@@ -516,11 +665,11 @@
                                 type: 'success',
                                 message: '注销成功!'
                             });
-                            setTimeout(()=>{
-                                location.href= "./login.html"
-                            },  )
-                        }).catch(err=>{
-                            this.$message.error(err)
+                            setTimeout(() => {
+                                location.href = "./login.html"
+                            },)
+                        }).catch(err => {
+                        this.$message.error(err)
                     })
                 }).catch(() => {
                     this.$message({
@@ -532,6 +681,97 @@
             cancelUnsubscribe() {
                 this.delPass = null
             },
+
+            clearFormData(){
+                this.bookData = {}
+            },
+
+            addBookData(){
+                if(this.bookData.author == null ||this.bookData.author == ''){
+                    this.$message.error("请输入作者")
+                    return
+                }
+
+                if(this.bookData.name == null ||this.bookData.name == ''){
+                    this.$message.error("请输入书籍名字")
+                    return
+                }
+
+                if(this.bookData.name == null ||this.bookData.name == ''){
+                    this.$message.error("请输入书籍名字")
+                    return
+                }
+                if(this.bookData.type == null){
+                    this.$message.error("请填入书籍类型")
+                    return
+                }
+
+                if(this.bookData.status == null){
+                    this.$message.error("请填入状态")
+                    return
+                }
+
+                axios.put("http://localhost:8081/books/add",this.bookData)
+                .then(()=>{
+                    this.$message({
+                        type: 'success',
+                        message: '添加成功!'
+                    })
+                    this.clearFormData()
+                    this.reloadData()
+                }).catch(err=>{
+                    this.$message.error(err)
+                })
+
+            },
+
+            updateBookData(row){
+                this.dialogFormVisible = true
+                this.dialogFormData.author = row.author
+                this.dialogFormData.name = row.name
+                this.dialogFormData.description = row.description
+                if (row.status == '完结') {
+                    this.dialogFormData.status = '0'
+                }else{
+                    this.dialogFormData.status = '1'
+                }
+
+                this.dialogFormData.type = row.type
+
+                this.dialogFormData.id = row.id
+
+            },
+
+            deleteBookData(bookId){
+                axios.delete("http://localhost:8081/books/remove/"+bookId)
+                .then(()=>{
+                    this.$message({
+                        type:'success',
+                        message:'删除成功'
+                    })
+                    this.reloadData()
+                }).catch(err=>{
+                    this.$message.error(err)
+                })
+            },
+
+            submitChange(){
+                axios.post("http://localhost:8081/books/update",this.dialogFormData)
+                .then(()=>{
+                    this.$message({
+                        type:'success',
+                        message:'修改成功'
+                    })
+                    this.dialogFormVisible = false
+                    this.reloadData()
+                }).catch(err=>{
+                    this.$message.error(err)
+                })
+            },
+
+            cancelChange(){
+                this.dialogFormVisible = false
+            }
         }
     })
 </script>
