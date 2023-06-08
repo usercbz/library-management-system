@@ -21,5 +21,7 @@ public class User {
     //权限 1、0
     private Integer permission;
 
+    //邮箱
+    private String email;
 
 }

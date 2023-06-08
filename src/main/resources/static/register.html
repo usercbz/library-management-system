@@ -12,43 +12,40 @@
     <script src="./js/element-lib/index.js"></script>
     <script src="./js/axios-0.18.0.js"></script>
     <script src="./js/axios-intercept.js"></script>
-
     <style>
         body {
             width: 100vw;
             height: 100vh;
-
             /* 设置容器水平分布 */
             display: flex;
             /* 设置页面元素居中 */
             justify-content: center;
             align-items: center;
         }
-
     </style>
-
-
 </head>
 
 <body>
 <div id="app">
 
     <div>
-
-        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="80px" label-position="left">
+        <el-form :model="formData" status-icon label-width="80px" label-position="left">
 
             <el-form-item label="用户名" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
+                <el-input v-model="formData.name" @blur="checkUsername"></el-input>
             </el-form-item>
 
             <el-form-item label="密码" prop="pass">
-                <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+                <el-input type="password" v-model="formData.pass"></el-input>
             </el-form-item>
 
             <el-form-item label="确认密码" prop="checkPass">
-                <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+                <el-input type="password" v-model="formData.checkPass"></el-input>
             </el-form-item>
 
+            <el-form-item label="邮箱" prop="email">
+                <el-input v-model="formData.email"></el-input>
+            </el-form-item>
         </el-form>
     </div>
 
@@ -66,19 +63,24 @@
 
     <div style=" display: flex;justify-content: center;">
         <span style="margin-right: 60px">
-            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+            <el-button type="primary" @click="submitForm">注册</el-button>
         </span>
 
         <span>
-            <el-button @click="resetForm('ruleForm')">重置</el-button>
+            <el-button @click="resetForm('formData')">重置</el-button>
         </span>
+
     </div>
 
+    <div style="margin-left: 300px">
+        <el-link type="primary" href="login.html">已有账号，返回登录</el-link>
+    </div>
 </div>
 
 </body>
 
 <script>
+
     new Vue({
             el: "#app",
 
@@ -87,117 +89,97 @@
             },
 
             data() {
-                var validatePass = (rule, value, callback) => {
-                    if (value === '') {
-                        callback(new Error('请输入密码'));
-                    } else {
-                        if (this.ruleForm.checkPass !== '') {
-                            this.$refs.ruleForm.validateField('checkPass');
-                        }
-                        callback();
-                    }
-                };
-                var validatePass2 = (rule, value, callback) => {
-                    if (value === '') {
-                        callback(new Error('请再次输入密码'));
-                    } else if (value !== this.ruleForm.pass) {
-                        callback(new Error('两次输入密码不一致!'));
-                    } else {
-                        callback();
-                    }
-                };
-
-                var validateUsername = async (rule, value, callback) => {
-                    if (value === '') {
-                        callback(new Error('请输入用户名'));
-                    } else {
-                        const res = await axios.get("http://localhost:8081/users/validate/" + value);
-                        if (res.data.code == 0) {
-                            callback(new Error(res.data.msg));
-                        } else {
-                            callback()
-                        }
-                    }
-                };
-
                 return {
-                    ruleForm: {
+                    formData: {
                         name: '',
                         pass: '',
                         checkPass: '',
-                    },
-                    rules: {
-                        name: [
-                            {validator: validateUsername, trigger: 'blur'}
-                        ],
-                        pass: [
-                            {validator: validatePass, trigger: 'blur'}
-                        ],
-                        checkPass: [
-                            {validator: validatePass2, trigger: 'blur'}
-                        ],
+                        email: ''
                     },
                     code: '',
                     checkCode: ''
                 };
             },
             methods: {
-                submitForm(formName) {
-                    this.$refs[formName].validate((valid) => {
-                        if (valid) {
+                checkUsername() {
+                    if (this.formData.name) {
+                        return
+                    }
+                    axios.get("http://localhost:8081/users/validate/" + this.formData.name)
+                        .then(() => {
 
-                            if(this.code == null||this.code ===''){
-                                this.$message.error("请输入验证码！")
-                                return false
-                            }
-                            if (this.checkCode !== this.code){
-                                this.$message.error("验证码错误！")
-                                return false
-                            }
-
-                            const user = {
-                                username: this.ruleForm.name,
-                                password: this.ruleForm.pass
-                            }
-
-                            axios.post("http://localhost:8081/users/register", user)
-                                .then(res => {
-                                    if (res.data.code == 1) {
-
-                                        //成功
-                                        this.$message({
-                                            message: '注册成功！',
-                                            type: 'success'
-                                        });
-
-                                        setTimeout('location.href="./login.html"', 3000)
-
-                                    } else {
-                                        //失败
-                                        this.$message.error(res.data.msg)
-                                    }
-                                })
-
-                        } else {
-                            return false;
-                        }
-                    });
+                        }).catch(err => {
+                        this.$message.error(err)
+                    })
                 },
-                resetForm(formName) {
-                    this.$refs[formName].resetFields();
+                submitForm() {
+
+                    if (this.formData.name == '') {
+                        this.$message.error("请输入用户名！")
+                        return
+                    }
+                    if (this.formData.pass == '') {
+                        this.$message.error("请输入密码！")
+                        return
+                    }
+                    if (this.formData.checkPass == '') {
+                        this.$message.error("请确认密码！")
+                        return
+                    }
+                    if (this.formData.email == '') {
+                        this.$message.error("请确认邮箱！")
+                        return
+                    }
+                    if (this.code == null || this.code === '') {
+                        this.$message.error("请输入验证码！")
+                        return
+                    }
+                    if (this.checkCode !== this.code) {
+                        this.$message.error("验证码错误！")
+                        return
+                    }
+
+                    const user = {
+                        username: this.formData.name,
+                        password: this.formData.pass,
+                        email: this.email
+                    }
+
+                    axios.post("http://localhost:8081/users/register", user)
+                        .then(() => {
+                            //成功
+                            this.$message({
+                                message: '注册成功！',
+                                type: 'success'
+                            });
+                            setTimeout(() => {
+                                location.href = './login.html'
+                            }, 2000)
+                        }).catch(err => {
+                        this.$message.error(err)
+                    })
+
+                },
+                resetForm() {
+                    this.formData = {
+                        name: '',
+                        pass: '',
+                        checkPass: '',
+                        email: ''
+                    }
                 },
 
                 getCheckCode() {
                     axios.get("http://localhost:8081/users/code")
                         .then(res => {
-                            this.checkCode = res.data.data;
-                        })
+                            this.checkCode = res.data;
+                        }).catch(err => {
+                        this.$message.error(err)
+                    })
                 }
-
             }
         }
     )
-
 </script>
 
 </html>

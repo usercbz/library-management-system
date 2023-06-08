@@ -6,6 +6,7 @@ import com.cbz.librarymanagementsystem.entity.Book;
 import com.cbz.librarymanagementsystem.service.impl.BookServiceImpl;
 import com.cbz.librarymanagementsystem.service.impl.CollectBookServiceImpl;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
+import com.cbz.librarymanagementsystem.utils.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,10 @@ public class BookController {
 
     @PutMapping("/add")
     public Result addBook(@RequestBody Book book) {
+        //判断用户权限
+        if (UserHolder.getUser().getPermission() != 1){
+            return Result.fail("权限不足");
+        }
         return bookService.save(book) ? Result.succeed(null) : Result.fail("添加失败");
     }
 
@@ -58,7 +63,10 @@ public class BookController {
 
     @PostMapping("/update")
     public Result updateBookData(@RequestBody Book book) {
-
+        //判断用户权限
+        if (UserHolder.getUser().getPermission() != 1){
+            return Result.fail("权限不足");
+        }
         return bookService.updateById(book) ? Result.succeed(null) : Result.fail("修改失败");
     }
 }

@@ -4,14 +4,12 @@ import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.service.impl.UserServiceImpl;
 import com.cbz.librarymanagementsystem.template.PasswdData;
+import com.cbz.librarymanagementsystem.template.RetrievePassData;
 import com.cbz.librarymanagementsystem.utils.UserHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
-import static com.cbz.librarymanagementsystem.utils.SystemConst.CODE_LEN;
-import static com.cbz.librarymanagementsystem.utils.SystemConst.STING_CODE_TEMP;
 
 @RestController
 @RequestMapping("/users")
@@ -39,7 +37,7 @@ public class UserController {
 
     @GetMapping("/code")
     public Result sentCode() {
-        return Result.succeed(createCode());
+        return Result.succeed(userService.createCode());
     }
 
     @GetMapping
@@ -68,13 +66,19 @@ public class UserController {
         return userService.deleteUserByPasswd(passwdData,request);
     }
 
-    private String createCode() {
-
-        StringBuilder code = new StringBuilder();
-        for (int i = 0; i < CODE_LEN; i++) {
-            code.append(STING_CODE_TEMP.charAt((int) (Math.random() * 36)));
-        }
-
-        return code.toString();
+    @PostMapping ("/mailCode")
+    public Result sendMail(@RequestBody RetrievePassData retrievePassData){
+        return userService.sendMailMessage(retrievePassData);
     }
+
+    @PostMapping("/retrieve")
+    public Result retrievePassword(@RequestBody RetrievePassData retrievePassData){
+        return userService.retrievePassword(retrievePassData);
+    }
+
+    @GetMapping("/updateEmail/{newEmail}")
+    public Result changeEmail(@PathVariable String newEmail){
+        return userService.changeEmail(UserHolder.getUser().getId(),newEmail);
+    }
+
 }

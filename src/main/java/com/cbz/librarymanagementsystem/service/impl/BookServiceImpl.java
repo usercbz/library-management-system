@@ -6,6 +6,7 @@ import com.cbz.librarymanagementsystem.entity.Book;
 import com.cbz.librarymanagementsystem.mapper.BookMapper;
 import com.cbz.librarymanagementsystem.service.IBookService;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
+import com.cbz.librarymanagementsystem.utils.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,11 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
 
     @Override
     public Result deleteBooksById(Integer bookId) {
+
+        //判断用户权限
+        if (UserHolder.getUser().getPermission() != 1){
+            return Result.fail("权限不足");
+        }
 
         //删除用户收藏表中的数据
         if (!collectBookService.deleteCollectBookByBookId(null, bookId)) {

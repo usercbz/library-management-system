@@ -8,10 +8,13 @@ import com.cbz.librarymanagementsystem.mapper.CollectBookMapper;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
 import com.cbz.librarymanagementsystem.utils.BeanUtils;
+import com.cbz.librarymanagementsystem.utils.DefaultMailMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.UUID;
 
@@ -27,9 +30,12 @@ class LibraryManagementSystemApplicationTests {
     @Autowired
     private CollectBookMapper collectBookMapper;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
     @Test
     void contextLoads() {
-        QueryTemplate temp =new QueryTemplate();
+        QueryTemplate temp = new QueryTemplate();
         Book book = new Book();
         book.setStatus(0);
         temp.setBook(book);
@@ -40,27 +46,33 @@ class LibraryManagementSystemApplicationTests {
 
 
     @Test
-    void testUUID(){
+    void testUUID() {
         System.out.println(UUID.randomUUID());
     }
 
     @Test
-    void testJson(){
+    void testJson() {
         System.out.println(objectMapper);
     }
 
     @Test
-    void testBeanDTO(){
+    void testBeanDTO() {
 
-        UserDTO userDTO = BeanUtils.toBeanDTO(new User(2,"张三","123456",1), UserDTO.class);
+//        UserDTO userDTO = BeanUtils.toBeanDTO(new User(2, "张三", "123456", 1), UserDTO.class);
 
-        System.out.println(userDTO);
+//        System.out.println(userDTO);
     }
 
     @Test
-    void testCollectMapper(){
+    void testCollectMapper() {
         System.out.println(collectBookMapper.queryAllByUserId(1));
     }
 
+    @Test
+    void testSendMail() {
+
+        javaMailSender.send(new DefaultMailMessage("3288316494@qq.com", "Java发送邮件2", "你好，这是一条用于测试Spring Boot邮件发送功能的邮件2！")
+        );
+    }
 
 }

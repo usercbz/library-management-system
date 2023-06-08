@@ -71,7 +71,7 @@
 
     <div style=" display: flex;justify-content: center;">
             <span style="margin-right: 60px">
-                <el-button @click="retrievePassword" >找回密码</el-button>
+                <el-button @click="retrievePassword" :loading="loading">找回密码</el-button>
             </span>
 
         <span>
@@ -98,11 +98,31 @@
                 disabled: false,
                 codeBtnMsg: '发送验证码',
 
+                loading: false
             }
 
         },
         methods: {
             sendCodeToMail() {
+
+                if (this.formData.username === '') {
+                    this.$message.error("请输入用户名")
+                    return
+                }
+                if (this.formData.email === '') {
+                    this.$message.error("请输入邮箱地址")
+                    return
+                }
+
+                axios.post("http://localhost:8081/users/mailCode", this.formData)
+                    .then(() => {
+                        this.$message({
+                            message: '发送成功！',
+                            type: 'success'
+                        });
+                    }).catch(err => {
+                    this.$message.error(err)
+                })
 
                 // 禁用按钮
                 this.disabled = true;
@@ -115,6 +135,41 @@
                     clearInterval(taskId);
                     this.codeBtnMsg = "发送验证码";
                 }, 59000)
+            },
+
+            retrievePassword() {
+                if (this.formData.username === '') {
+                    this.$message.error("请输入用户名")
+                    return
+                }
+                if (this.formData.email === '') {
+                    this.$message.error("请输入邮箱地址")
+                    return
+                }
+                if (this.formData.code === '') {
+                    this.$message.error("请输入验证码")
+                    return
+                }
+
+                this.loading = true
+
+                axios.post("http://localhost:8081/users/retrieve", this.formData)
+                    .then(() => {
+                        this.loading = false
+
+                        this.$message({
+                            message: '成功重置密码！',
+                            type: 'success'
+                        });
+
+                        setTimeout(() => {
+                            location.href = 'login.html'
+                        }, 3000)
+                    }).catch(err => {
+                    this.loading = false
+                    this.$message.error(err)
+                })
+
             },
             cancelRetrieve() {
                 this.formData = {

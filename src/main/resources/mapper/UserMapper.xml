@@ -16,6 +16,16 @@
         set password = #{password}
         where id = #{id};
     </update>
+    <update id="updatePasswordByUsername">
+        update tb_user
+        set password = #{password}
+        where username = #{username};
+    </update>
+    <update id="updateEmailById">
+        update tb_user
+        set email = #{email}
+        where id = #{id};
+    </update>
 
     <select id="getList" resultType="com.cbz.librarymanagementsystem.entity.User">
         select *

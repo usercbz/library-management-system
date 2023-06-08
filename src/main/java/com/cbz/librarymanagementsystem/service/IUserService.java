@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.template.PasswdData;
+import com.cbz.librarymanagementsystem.template.RetrievePassData;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,4 +20,11 @@ public interface IUserService extends IService<User> {
     Result updateUsername(String newUsername, HttpServletRequest request);
 
     Result deleteUserByPasswd(PasswdData passwdData,HttpServletRequest  request);
+
+    Result sendMailMessage(RetrievePassData retrievePassData);
+
+    Result retrievePassword(RetrievePassData retrievePassData);
+
+    Result changeEmail(Integer id, String newEmail);
+
 }

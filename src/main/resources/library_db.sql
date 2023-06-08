@@ -30,12 +30,12 @@ DROP TABLE IF EXISTS `tb_book`;
 CREATE TABLE `tb_book` (
   `id` int NOT NULL AUTO_INCREMENT,
   `author` varchar(12) DEFAULT NULL,
-  `name` varchar(12) NOT NULL,
-  `description` varchar(64) DEFAULT NULL,
+  `name` varchar(36) NOT NULL,
+  `description` varchar(128) DEFAULT NULL,
   `type` varchar(10) DEFAULT NULL,
   `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `tb_book` (
 
 LOCK TABLES `tb_book` WRITE;
 /*!40000 ALTER TABLE `tb_book` DISABLE KEYS */;
-INSERT INTO `tb_book` VALUES (1,'刘慈欣','三体','三体小说','科幻',0),(2,'唐家三少','斗罗大陆','斗罗大陆','玄幻',0),(3,'天蚕土豆','斗破苍穹','斗气','玄幻',0),(4,'辰东','完美世界','完美世界','玄幻',0),(5,'唐家三少','神印王座','神印王座','玄幻',0),(6,'天蚕土豆','大主宰','大主宰','玄幻',0),(7,'天蚕土豆','武动乾坤','武动乾坤','玄幻',0),(8,'辰东','遮天','遮天','玄幻',0),(9,'我吃西红柿','盘龙','盘龙','玄幻',0),(10,'我吃西红柿','星辰变','星辰变','玄幻',0),(11,'墨香铜臭','魔道祖师','魔道祖师','仙侠',0),(12,'橘公司','约会大作战','约会大作战','后宫',0),(13,'佐伯さん','邻家天使','邻家天使','爱情',1),(14,'伏濑','史莱姆','史莱姆','冒险',1),(15,'长月达平','Re0','蕾姆','冒险',1);
+INSERT INTO `tb_book` VALUES (3,'天蚕土豆','斗破苍穹','斗破苍穹666','玄幻',0),(4,'辰东','完美世界','完美世界','玄幻',0),(5,'唐家三少','神印王座','神印王座','玄幻',0),(6,'天蚕土豆','大主宰','大主宰','玄幻',0),(7,'天蚕土豆','武动乾坤','武动乾坤','玄幻',0),(8,'辰东','遮天','遮天','玄幻',0),(9,'我吃西红柿','盘龙','盘龙','玄幻',0),(10,'我吃西红柿','星辰变','星辰变','玄幻',0),(11,'墨香铜臭','魔道祖师','魔道祖师','仙侠',0),(12,'橘公司','约会大作战','约会大作战','后宫',0),(13,'佐伯さん','邻家天使','邻家天使','爱情',1),(14,'伏濑','史莱姆','史莱姆','冒险',1),(15,'长月达平','Re0','蕾姆','冒险',1),(16,'月夜涙','回复术士的重启人生','回复术士无法一个人战斗。少年凯亚尔正因为是如此无力的存在，\n才会一直遭到勇者与魔术师利用、剥夺。\n然而有一天，他察觉到将回复（Heal）锻炼到极致后还有更进一步的能力，\n决定借此重建整个世界，回到四年前从头来过。','冒险',1),(17,'丸山くがね','不死者之王','一款席卷游戏界的网路游戏「YGGDRASIL」，有一天突然毫无预警地停止一切服务原本应该是如此。但是不知为何它却成了一款即使过了结束时间，玩家角色依然不会登出的游戏。NPC开始拥有自己的思想。','冒险',1),(18,'白米良','平凡职业造就世界最强','『被霸凌的孩子』南云始，与同班同学一起被召唤至异世界。虽然同学们接连显现战斗取向的特殊能力，但始却只拥有炼成师这种平凡的能力。而且在异世界仍为最弱的他，竟被某位同学恶意推落了迷宫深谷──！？','冒险',1);
 /*!40000 ALTER TABLE `tb_book` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -60,6 +60,7 @@ CREATE TABLE `tb_user` (
   `username` varchar(20) NOT NULL,
   `password` varchar(64) NOT NULL,
   `permission` int DEFAULT '0',
+  `email` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=281640971 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -70,7 +71,7 @@ CREATE TABLE `tb_user` (
 
 LOCK TABLES `tb_user` WRITE;
 /*!40000 ALTER TABLE `tb_user` DISABLE KEYS */;
-INSERT INTO `tb_user` VALUES (281640969,'test','123456',0),(281640970,'admin','password',1);
+INSERT INTO `tb_user` VALUES (1,'test','123456',0,'3288316494@qq.com'),(2,'admin','password',1,'13450144906@163.com');
 /*!40000 ALTER TABLE `tb_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +91,7 @@ CREATE TABLE `tb_user_collect` (
   KEY `book_id` (`book_id`),
   CONSTRAINT `tb_user_collect_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`id`),
   CONSTRAINT `tb_user_collect_ibfk_2` FOREIGN KEY (`book_id`) REFERENCES `tb_book` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,4 +112,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-04 23:14:53
+-- Dump completed on 2023-06-08 13:39:42

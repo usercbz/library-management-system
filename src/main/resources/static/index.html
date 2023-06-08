@@ -198,9 +198,11 @@
                                         </el-button>
 
                                         <el-dialog title="修改书籍信息" :visible.sync="dialogFormVisible">
-                                            <el-form :model="dialogFormData" label-position="left" label-width="80px" style="width: 400px;">
+                                            <el-form :model="dialogFormData" label-position="left" label-width="80px"
+                                                     style="width: 400px;">
                                                 <el-form-item label="作者">
-                                                    <el-input placeholder="作者" v-model="dialogFormData.author"></el-input>
+                                                    <el-input placeholder="作者"
+                                                              v-model="dialogFormData.author"></el-input>
                                                 </el-form-item>
 
                                                 <el-form-item label="书名">
@@ -226,7 +228,8 @@
                                                 </el-form-item>
 
                                                 <el-form-item label="简介">
-                                                    <el-input type="textarea" v-model="dialogFormData.description"></el-input>
+                                                    <el-input type="textarea"
+                                                              v-model="dialogFormData.description"></el-input>
                                                 </el-form-item>
 
                                                 <el-form-item>
@@ -237,7 +240,8 @@
                                             </el-form>
                                         </el-dialog>
 
-                                        <el-button type="danger" @click="deleteBookData(scope.row.id)" icon="el-icon-delete"
+                                        <el-button type="danger" @click="deleteBookData(scope.row.id)"
+                                                   icon="el-icon-delete"
                                                    size="mini">删除
                                         </el-button>
                                     </template>
@@ -297,7 +301,7 @@
                     <el-tab-pane label="修改用户名">
                         <div style="display: flex;justify-content: center;">
 
-                            <el-form status-icon label-width="100px"
+                            <el-form status-icon label-width="80px"
                                      label-position="left">
 
                                 <el-form-item label="新用户名:">
@@ -307,6 +311,27 @@
                                 <el-form-item>
                                     <el-button type="primary" @click="changeName">修改</el-button>
                                     <el-button @click="clearInputName">取消</el-button>
+                                </el-form-item>
+
+                            </el-form>
+
+                        </div>
+
+                    </el-tab-pane>
+
+                    <el-tab-pane label="修改绑定邮箱">
+                        <div style="display: flex;justify-content: center;">
+
+                            <el-form status-icon label-width="80px"
+                                     label-position="left">
+
+                                <el-form-item label="新邮箱:">
+                                    <el-input v-model="newEmail"></el-input>
+                                </el-form-item>
+
+                                <el-form-item>
+                                    <el-button type="primary" @click="changeEmail">修改</el-button>
+                                    <el-button @click="clearInputEmail">取消</el-button>
                                 </el-form-item>
 
                             </el-form>
@@ -405,7 +430,7 @@
 
                 tableData: [],
                 collectBooks: [],
-                allBooks:[],
+                allBooks: [],
 
                 activeBookInfo: {},
 
@@ -418,7 +443,7 @@
 
                 isAdmin: false,
 
-                currentPage:1,
+                currentPage: 1,
                 total: 100,
                 pageSize: 10,
 
@@ -426,27 +451,28 @@
                 activeName: 'first',
 
                 newUsername: '',
+                newEmail: '',
                 oldPass: '',
                 newPass: '',
                 checkPass: '',
 
                 delPass: '',
 
-                dialogFormVisible:false,
+                dialogFormVisible: false,
 
-                dialogFormData:{
-                    id:null,
+                dialogFormData: {
+                    id: null,
                     author: '',
                     name: '',
                     type: '',
                     status: '',
-                    description:''
+                    description: ''
                 },
 
             }
         },
         methods: {
-            reloadData(){
+            reloadData() {
                 this.getTableData(1)
                 this.getAllBooks()
                 this.getCollectBooks()
@@ -454,20 +480,20 @@
             handleClick(row) {
                 this.activeBookInfo = row
             },
-            getAllBooks(){
+            getAllBooks() {
                 axios.get("http://localhost:8081/books/all")
-                .then(res=>{
-                    let books = res.data
-                    books.forEach(book => {
-                        if (book.status == 0) {
-                            book.status = '完结'
-                        } else {
-                            book.status = '在更'
-                        }
-                    });
+                    .then(res => {
+                        let books = res.data
+                        books.forEach(book => {
+                            if (book.status == 0) {
+                                book.status = '完结'
+                            } else {
+                                book.status = '在更'
+                            }
+                        });
 
-                    this.allBooks = books;
-                })
+                        this.allBooks = books;
+                    })
             },
             addCollect(bookId) {
                 axios.post("http://localhost:8081/books/collect/add/" + bookId)
@@ -647,6 +673,27 @@
                     this.$message.error(err)
                 })
             },
+
+            changeEmail() {
+                if (this.newEmail == null || this.newEmail === '') {
+                    this.$message.error("请输入新的邮箱")
+                    return
+                }
+                axios.get("http://localhost:8081/users/updateEmail/" + this.newEmail)
+                    .then(() => {
+                        //成功
+                        this.$message({
+                            type: "success",
+                            message: "修改成功"
+                        })
+                        this.clearInputEmail()
+                    }).catch(err => {
+                    this.$message.error(err)
+                })
+            },
+            clearInputEmail() {
+                this.newEmail = null
+            },
             unsubscribe() {
 
                 this.$confirm('此操作将不可逆, 是否要注销账号?', '警告', {
@@ -682,57 +729,57 @@
                 this.delPass = null
             },
 
-            clearFormData(){
+            clearFormData() {
                 this.bookData = {}
             },
 
-            addBookData(){
-                if(this.bookData.author == null ||this.bookData.author == ''){
+            addBookData() {
+                if (this.bookData.author == null || this.bookData.author == '') {
                     this.$message.error("请输入作者")
                     return
                 }
 
-                if(this.bookData.name == null ||this.bookData.name == ''){
+                if (this.bookData.name == null || this.bookData.name == '') {
                     this.$message.error("请输入书籍名字")
                     return
                 }
 
-                if(this.bookData.name == null ||this.bookData.name == ''){
+                if (this.bookData.name == null || this.bookData.name == '') {
                     this.$message.error("请输入书籍名字")
                     return
                 }
-                if(this.bookData.type == null){
+                if (this.bookData.type == null) {
                     this.$message.error("请填入书籍类型")
                     return
                 }
 
-                if(this.bookData.status == null){
+                if (this.bookData.status == null) {
                     this.$message.error("请填入状态")
                     return
                 }
 
-                axios.put("http://localhost:8081/books/add",this.bookData)
-                .then(()=>{
-                    this.$message({
-                        type: 'success',
-                        message: '添加成功!'
-                    })
-                    this.clearFormData()
-                    this.reloadData()
-                }).catch(err=>{
+                axios.put("http://localhost:8081/books/add", this.bookData)
+                    .then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '添加成功!'
+                        })
+                        this.clearFormData()
+                        this.reloadData()
+                    }).catch(err => {
                     this.$message.error(err)
                 })
 
             },
 
-            updateBookData(row){
+            updateBookData(row) {
                 this.dialogFormVisible = true
                 this.dialogFormData.author = row.author
                 this.dialogFormData.name = row.name
                 this.dialogFormData.description = row.description
                 if (row.status == '完结') {
                     this.dialogFormData.status = '0'
-                }else{
+                } else {
                     this.dialogFormData.status = '1'
                 }
 
@@ -742,34 +789,34 @@
 
             },
 
-            deleteBookData(bookId){
-                axios.delete("http://localhost:8081/books/remove/"+bookId)
-                .then(()=>{
-                    this.$message({
-                        type:'success',
-                        message:'删除成功'
-                    })
-                    this.reloadData()
-                }).catch(err=>{
+            deleteBookData(bookId) {
+                axios.delete("http://localhost:8081/books/remove/" + bookId)
+                    .then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功'
+                        })
+                        this.reloadData()
+                    }).catch(err => {
                     this.$message.error(err)
                 })
             },
 
-            submitChange(){
-                axios.post("http://localhost:8081/books/update",this.dialogFormData)
-                .then(()=>{
-                    this.$message({
-                        type:'success',
-                        message:'修改成功'
-                    })
-                    this.dialogFormVisible = false
-                    this.reloadData()
-                }).catch(err=>{
+            submitChange() {
+                axios.post("http://localhost:8081/books/update", this.dialogFormData)
+                    .then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '修改成功'
+                        })
+                        this.dialogFormVisible = false
+                        this.reloadData()
+                    }).catch(err => {
                     this.$message.error(err)
                 })
             },
 
-            cancelChange(){
+            cancelChange() {
                 this.dialogFormVisible = false
             }
         }

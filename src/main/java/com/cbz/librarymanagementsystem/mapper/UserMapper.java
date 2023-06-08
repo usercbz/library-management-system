@@ -13,4 +13,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     boolean updatePasswordById(@Param("id") Integer id, @Param("password") String password);
 
+    boolean updatePasswordByUsername(@Param("username") String username, @Param("password") String password);
+
+    boolean updateEmailById(@Param("id") Integer id, @Param("email") String email);
 }
