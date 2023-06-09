@@ -6,9 +6,11 @@ import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.mapper.BookMapper;
 import com.cbz.librarymanagementsystem.mapper.CollectBookMapper;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;
+import com.cbz.librarymanagementsystem.service.impl.UserServiceImpl;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
 import com.cbz.librarymanagementsystem.utils.BeanUtils;
 import com.cbz.librarymanagementsystem.utils.DefaultMailMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import java.util.UUID;
+import java.util.*;
 
 @SpringBootTest
 class LibraryManagementSystemApplicationTests {
@@ -56,14 +58,6 @@ class LibraryManagementSystemApplicationTests {
     }
 
     @Test
-    void testBeanDTO() {
-
-//        UserDTO userDTO = BeanUtils.toBeanDTO(new User(2, "张三", "123456", 1), UserDTO.class);
-
-//        System.out.println(userDTO);
-    }
-
-    @Test
     void testCollectMapper() {
         System.out.println(collectBookMapper.queryAllByUserId(1));
     }
@@ -75,4 +69,24 @@ class LibraryManagementSystemApplicationTests {
         );
     }
 
+    @Test
+    void testMapToJson() throws Exception {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        ArrayList<User> users = new ArrayList<>();
+        Collections.addAll(users,new User(),new User(),new User());
+        hashMap.put("total","1");
+        hashMap.put("users",users);
+
+        String json = objectMapper.writeValueAsString(hashMap);
+        System.out.println(json);
+
+        HashMap hashMap1 = objectMapper.readValue(json, HashMap.class);
+
+        String total = (String) hashMap.get("total");
+
+        List<User> users1 = (List<User>) hashMap.get("users");
+
+        System.out.println(total);
+        System.out.println(users1);
+    }
 }

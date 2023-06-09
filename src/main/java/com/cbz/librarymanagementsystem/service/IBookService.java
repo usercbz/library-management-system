@@ -9,4 +9,11 @@ public interface IBookService extends IService<Book> {
     Result queryTableData(QueryTemplate queryTemplate);
 
     Result deleteBooksById(Integer bookId);
+
+    Result addBook(Book book);
+
+    Result updateBook(Book book);
+
+    Result getAllBooks();
+
 }

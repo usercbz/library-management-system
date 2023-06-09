@@ -72,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             e.printStackTrace();
         }
 
-        redisTemplate.opsForValue().set(LOGIN_TOKEN_KEY + token, jsonUser, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(LOGIN_TOKEN_KEY_PRE + token, jsonUser, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
 
         return Result.succeed(token);
     }
@@ -141,7 +141,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             e.printStackTrace();
         }
 
-        redisTemplate.opsForValue().set(LOGIN_TOKEN_KEY + token, jsonUser, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(LOGIN_TOKEN_KEY_PRE + token, jsonUser, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
 
         UserHolder.saveUser(user);
         return Result.succeed(null);
@@ -169,7 +169,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             //将redis的缓存删除
             String token = request.getHeader("authorization");
 
-            redisTemplate.delete(LOGIN_TOKEN_KEY + token);
+            redisTemplate.delete(LOGIN_TOKEN_KEY_PRE + token);
             return Result.succeed(null);
         }
 
@@ -188,7 +188,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         //正确、发送验证码
         String code = createCode();
         //在redis保存验证码
-        redisTemplate.opsForValue().set(RETRIEVE_CODE_KEY + username, code, RETRIEVE_CODE_TTL, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(RETRIEVE_CODE_KEY_PRE + username, code, RETRIEVE_CODE_TTL, TimeUnit.MINUTES);
         String info = SEND_CODE_INFO_PRE + code + SEND_CODE_INFO;
         //发送验证码邮件
         try {
@@ -214,7 +214,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return Result.fail("用户名或邮箱有误");
         }
         //校验验证码
-        String key = RETRIEVE_CODE_KEY + username;
+        String key = RETRIEVE_CODE_KEY_PRE + username;
         //1、查询redis缓存中的验证码
         String cacheCode = redisTemplate.opsForValue().get(key);
         //验证

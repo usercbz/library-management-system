@@ -22,7 +22,8 @@ public class BookController {
 
     @GetMapping("all")
     public Result getAllBooks() {
-        return Result.succeed(bookService.list());
+
+        return bookService.getAllBooks();
     }
 
     @PostMapping("/data")
@@ -53,7 +54,7 @@ public class BookController {
         if (UserHolder.getUser().getPermission() != 1){
             return Result.fail("权限不足");
         }
-        return bookService.save(book) ? Result.succeed(null) : Result.fail("添加失败");
+        return bookService.addBook(book);
     }
 
     @DeleteMapping("/remove/{bookId}")
@@ -67,6 +68,6 @@ public class BookController {
         if (UserHolder.getUser().getPermission() != 1){
             return Result.fail("权限不足");
         }
-        return bookService.updateById(book) ? Result.succeed(null) : Result.fail("修改失败");
+        return bookService.updateBook(book);
     }
 }

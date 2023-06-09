@@ -71,7 +71,7 @@ CREATE TABLE `tb_user` (
 
 LOCK TABLES `tb_user` WRITE;
 /*!40000 ALTER TABLE `tb_user` DISABLE KEYS */;
-INSERT INTO `tb_user` VALUES (1,'test','123456',0,'3288316494@qq.com'),(2,'admin','password',1,'13450144906@163.com');
+INSERT INTO `tb_user` VALUES (2,'admin','password',1,'xxx@xxx.com');
 /*!40000 ALTER TABLE `tb_user` ENABLE KEYS */;
 UNLOCK TABLES;
 

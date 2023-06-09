@@ -1,8 +1,6 @@
 package com.cbz.librarymanagementsystem.controller;
 
 import com.cbz.librarymanagementsystem.dto.UserDTO;
-import com.cbz.librarymanagementsystem.entity.User;
-import com.cbz.librarymanagementsystem.utils.BeanUtils;
 import com.cbz.librarymanagementsystem.utils.UserHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -12,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
-import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_KEY;
+import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_KEY_PRE;
 import static com.cbz.librarymanagementsystem.utils.RedisConst.LOGIN_TOKEN_TTL;
 
 public class SystemInterceptor implements HandlerInterceptor {
@@ -34,7 +32,7 @@ public class SystemInterceptor implements HandlerInterceptor {
         }
 
         //根据token查询redis缓存
-        String jsonUser = redisTemplate.opsForValue().get(LOGIN_TOKEN_KEY + token);
+        String jsonUser = redisTemplate.opsForValue().get(LOGIN_TOKEN_KEY_PRE + token);
 
         if (jsonUser == null) {
             return true;
@@ -50,7 +48,7 @@ public class SystemInterceptor implements HandlerInterceptor {
         UserHolder.saveUser(user);
 
         //刷新有效期
-        redisTemplate.expire(LOGIN_TOKEN_KEY + token, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
+        redisTemplate.expire(LOGIN_TOKEN_KEY_PRE + token, LOGIN_TOKEN_TTL, TimeUnit.DAYS);
 
         return true;
     }
