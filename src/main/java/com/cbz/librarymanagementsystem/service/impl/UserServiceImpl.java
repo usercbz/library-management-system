@@ -276,7 +276,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < len; i++) {
-            code.append(STING_CODE_TEMP.charAt((int) (Math.random() * 36)));
+            code.append(STING_CODE_TEMP.charAt((int) (Math.random() * 62)));
         }
 
         return code.toString();

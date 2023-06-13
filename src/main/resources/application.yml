@@ -23,9 +23,9 @@ spring:
 #    服务器地址
     host: smtp.163.com
 #    邮箱
-    username: 13450144906@163.com
+    username:
 #    密钥！注意不是密码
-    password: LMLBAOSKGFYCEQRA
+    password:
 
 
 mybatis-plus:
