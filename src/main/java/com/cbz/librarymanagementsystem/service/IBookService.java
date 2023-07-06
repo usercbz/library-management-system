@@ -16,4 +16,5 @@ public interface IBookService extends IService<Book> {
 
     Result getAllBooks();
 
+    Result getBookById(Integer bookId);
 }

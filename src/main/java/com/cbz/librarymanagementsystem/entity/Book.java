@@ -20,4 +20,6 @@ public class Book {
     private String author;
     private Integer status;
     private String type;
+    //图片
+    private String imageUrl;
 }

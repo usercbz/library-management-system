@@ -3,12 +3,14 @@ package com.cbz.librarymanagementsystem.controller;
 
 import com.cbz.librarymanagementsystem.dto.Result;
 import com.cbz.librarymanagementsystem.entity.Book;
+import com.cbz.librarymanagementsystem.service.UploadService;
 import com.cbz.librarymanagementsystem.service.impl.BookServiceImpl;
 import com.cbz.librarymanagementsystem.service.impl.CollectBookServiceImpl;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
 import com.cbz.librarymanagementsystem.utils.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/books")
@@ -19,6 +21,14 @@ public class BookController {
 
     @Autowired
     private CollectBookServiceImpl collectBookService;
+
+    @Autowired
+    private UploadService uploadService;
+
+    @GetMapping("/{bookId}")
+    public Result getBook(@PathVariable("bookId") Integer bookId){
+        return bookService.getBookById(bookId);
+    }
 
     @GetMapping("all")
     public Result getAllBooks() {
@@ -69,5 +79,10 @@ public class BookController {
             return Result.fail("权限不足");
         }
         return bookService.updateBook(book);
+    }
+
+    @PostMapping("/upload")
+    public Result uploadFile(@RequestParam MultipartFile imageFile){
+        return uploadService.uploadFile(imageFile);
     }
 }

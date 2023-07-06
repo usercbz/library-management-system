@@ -8,25 +8,28 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/library?useSSL=false
-#    用户名
+    #    用户名
     username: root
-#    密码
+    #    密码
     password: 111111
 
   redis:
-#    主机
+    #    主机
     host: 192.168.93.20
-#    密码
+    #    密码
     password: 123456
   mail:
     default-encoding: utf-8
-#    服务器地址
+    #    服务器地址
     host: smtp.163.com
-#    邮箱
+    #    邮箱
     username:
-#    密钥！注意不是密码
+    #    密钥！注意不是密码
     password:
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml

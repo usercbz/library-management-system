@@ -2,21 +2,28 @@ package com.cbz.librarymanagementsystem;
 
 import com.cbz.librarymanagementsystem.dto.UserDTO;
 import com.cbz.librarymanagementsystem.entity.Book;
+import com.cbz.librarymanagementsystem.entity.BookReview;
 import com.cbz.librarymanagementsystem.entity.User;
 import com.cbz.librarymanagementsystem.mapper.BookMapper;
 import com.cbz.librarymanagementsystem.mapper.CollectBookMapper;
 import com.cbz.librarymanagementsystem.mapper.UserMapper;
+import com.cbz.librarymanagementsystem.service.impl.BookReviewServiceImpl;
 import com.cbz.librarymanagementsystem.service.impl.UserServiceImpl;
 import com.cbz.librarymanagementsystem.template.QueryTemplate;
 import com.cbz.librarymanagementsystem.utils.BeanUtils;
 import com.cbz.librarymanagementsystem.utils.DefaultMailMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @SpringBootTest
@@ -33,6 +40,9 @@ class LibraryManagementSystemApplicationTests {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    private BookReviewServiceImpl bookReviewService;
 
     @Test
     void contextLoads() {
@@ -87,5 +97,15 @@ class LibraryManagementSystemApplicationTests {
 
         System.out.println(total);
         System.out.println(users1);
+    }
+
+    @Test
+    void testMysqlTime(){
+        System.out.println(bookReviewService.list());
+    }
+
+    @Test
+    void testFile(){
+
     }
 }

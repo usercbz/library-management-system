@@ -17,8 +17,11 @@ public class SystemInterceptor implements HandlerInterceptor {
 
     private StringRedisTemplate redisTemplate;
 
-    public SystemInterceptor(StringRedisTemplate redisTemplate) {
+    private ObjectMapper jsonMapper;
+
+    public SystemInterceptor(StringRedisTemplate redisTemplate, ObjectMapper jsonMapper) {
         this.redisTemplate = redisTemplate;
+        this.jsonMapper = jsonMapper;
     }
 
     @Override
@@ -38,8 +41,7 @@ public class SystemInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserDTO user = objectMapper.readValue(jsonUser, UserDTO.class);
+        UserDTO user = jsonMapper.readValue(jsonUser, UserDTO.class);
 
         if (user == null) {
             return true;

@@ -37,10 +37,8 @@ public class CollectBookServiceImpl extends ServiceImpl<CollectBookMapper, Colle
 
     private final ArrayList<String> redisKeyList = new ArrayList<>();
 
-
     @Override
     public Result addBookToCollect(Integer bookId) {
-
         Integer id = UserHolder.getUser().getId();
 
         //查询书籍是否已经收藏
@@ -84,10 +82,8 @@ public class CollectBookServiceImpl extends ServiceImpl<CollectBookMapper, Colle
                 return Result.fail("服务器异常");
             }
         }
-
         //从数据库查询
         books = baseMapper.queryAllByUserId(id);
-
         try {
             String jsonBooks = jsonMapper.writeValueAsString(books);
             //存入redis
@@ -97,36 +93,29 @@ public class CollectBookServiceImpl extends ServiceImpl<CollectBookMapper, Colle
         } catch (JsonProcessingException e) {
             return Result.fail("服务器异常");
         }
-
         return Result.succeed(books);
     }
 
     @Override
     public Result deleteBookToCollect(Integer bookId) {
         //删除
-        if (deleteCollectBookByBookId(bookId)) {
-            //删除缓存
-            redisTemplate.delete(QUERY_COLLECT_BOOK_KEY_PRE + UserHolder.getUser().getId());
-            return Result.succeed(null);
-        }
+        deleteCollectBookByBookId(bookId);
+        //删除缓存
+        redisTemplate.delete(QUERY_COLLECT_BOOK_KEY_PRE + UserHolder.getUser().getId());
+        return Result.succeed(null);
 
-        return Result.fail("取消收藏失败！");
     }
 
-
-    public boolean deleteCollectBookByBookId(Integer userId, Integer bookId) {
-
+    public void deleteCollectBookByBookId(Integer userId, Integer bookId) {
         HashMap<String, Object> hashMap = new HashMap<>();
-
         if (userId != null) {
             hashMap.put("user_id", userId);
         }
         hashMap.put("book_id", bookId);
-
-        return removeByMap(hashMap);
+        removeByMap(hashMap);
     }
 
-    private boolean deleteCollectBookByBookId(Integer bookId) {
-        return deleteCollectBookByBookId(UserHolder.getUser().getId(), bookId);
+    private void deleteCollectBookByBookId(Integer bookId) {
+        deleteCollectBookByBookId(UserHolder.getUser().getId(), bookId);
     }
 }

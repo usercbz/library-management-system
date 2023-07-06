@@ -81,4 +81,9 @@ public class UserController {
         return userService.changeEmail(UserHolder.getUser().getId(),newEmail);
     }
 
+    @PostMapping("/feedback")
+    public Result feedback(){
+        return null;
+    }
+
 }
